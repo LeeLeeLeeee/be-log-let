@@ -47,9 +47,9 @@ jobs:
           username: ${{secrets.USERNAME}}
           key: ${{secrets.KEY}}
           script: |
-            IMAGE=${{ needs.build-and-push.outputs.image }}
+            echo "${{ needs.build-and-push.outputs.image }}"
             # pull latest
-            docker pull $IMAGE
+            docker pull ${{ needs.build-and-push.outputs.image }}
             # stop & remove old
             docker stop myapp  || true
             docker rm   myapp  || true
@@ -57,4 +57,4 @@ jobs:
             docker run -d \
               --name myapp \
               -p 80:3000 \
-              $IMAGE
+              ${{ needs.build-and-push.outputs.image }}
