@@ -1,13 +1,14 @@
 name: Deploy to DigitalOcean Droplet
-'on':
+on:
   push:
-    branches:
-      - main
+    branches: [ main ] 
 
 jobs:
   build-and-push:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,7 +47,7 @@ jobs:
           username: ${{secrets.USERNAME}}
           key: ${{secrets.KEY}}
           script: |
-            IMAGE=${{ steps.meta.outputs.image }}
+            IMAGE=${{ needs.build-and-push.outputs.image }}
             # pull latest
             docker pull $IMAGE
             # stop & remove old
