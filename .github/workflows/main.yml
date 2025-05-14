@@ -30,7 +30,9 @@ jobs:
 
       - name: Set output image
         id: meta
-        run: echo "::set-output name=image::${{ secrets.DOCKERHUB_USERNAME }}/be-log-let:${{ github.sha }}"
+        run: |
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/be-log-let:${{ github.sha }}
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
         
   deploy:
     name: Deploy to Droplet
@@ -44,7 +46,7 @@ jobs:
           username: ${{secrets.USERNAME}}
           key: ${{secrets.KEY}}
           script: |
-            IMAGE=${{ needs.build-and-push.outputs.image }}
+            IMAGE=${{ steps.meta.outputs.image }}
             # pull latest
             docker pull $IMAGE
             # stop & remove old
