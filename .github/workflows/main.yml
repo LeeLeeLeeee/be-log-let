@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.meta.outputs.image }}
+      SELECTED_COLOR: ${{steps.color-selector.outputs.SELECTED_COLOR}}
     steps:
       # - name: Checkout code
       #   uses: actions/checkout@v4
@@ -50,7 +51,7 @@ jobs:
     steps:
       - name: TEST
         run: |
-          echo "${{ needs.build-and-push.outputs.image }}"
+          echo "${{ needs.build-and-push.outputs.SELECTED_COLOR }}"
       # - name: SSH & Deploy
       #   uses: appleboy/ssh-action@master
       #   with:
