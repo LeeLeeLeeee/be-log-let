@@ -47,6 +47,8 @@ jobs:
           key: ${{secrets.KEY}}
           script: |
             IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/be-log-let:${{ needs.build-and-push.outputs.tag }}
+            echo "${{ secrets.DOCKERHUB_PW }}" \
+              | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             # pull latest
             docker pull $IMAGE
             # stop & remove old
