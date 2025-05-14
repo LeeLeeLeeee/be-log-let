@@ -34,6 +34,11 @@ jobs:
         run: |
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/be-log-let:${{ github.sha }}
           echo "image=$IMAGE" >> $GITHUB_OUTPUT
+      - name: Dump GITHUB_OUTPUT
+        run: |
+          echo ">> GITHUB_OUTPUT is $GITHUB_OUTPUT"
+          echo ">> contents of GITHUB_OUTPUT:"
+          cat $GITHUB_OUTPUT || echo "(파일이 비었거나 없어요)"
         
   deploy:
     name: Deploy to Droplet
