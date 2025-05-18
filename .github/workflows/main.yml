@@ -64,11 +64,11 @@ jobs:
             echo "${{ env.DOCKERHUB_PW }}" \
               | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
             # pull latest
-            docker-compose pull
+            docker compose pull
             # stop & remove old
             docker stop myapp  || true
             docker rm   myapp  || true
             docker stop mydb  || true
             docker rm   mydb  || true
             # run new
-            docker-compose up -d
+            docker compose up -d
