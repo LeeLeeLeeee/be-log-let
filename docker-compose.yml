@@ -6,8 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - name=value
+    env_file:
+      - .env
     image: ${DOCKERHUB_USERNAME}/be-log-let:${GITHUB_SHA}
     ports:
       - "80:${PORT}"
