@@ -63,7 +63,7 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-    - name: create .env file
+      - name: create .env file
         run: |
           echo "PORT=${{ env.PORT }}" > .env
           echo "DB_HOST=${{ env.DB_HOST }}" >> .env
