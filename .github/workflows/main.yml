@@ -44,7 +44,6 @@ jobs:
       - name: Tag and Push App Image
         run: |
           IMAGE_NAME=${{ env.DOCKERHUB_USERNAME }}/be-log-let:${{ env.GITHUB_SHA }}
-          docker tag be-log-let_app $IMAGE_NAME
           docker push $IMAGE_NAME
 
       
