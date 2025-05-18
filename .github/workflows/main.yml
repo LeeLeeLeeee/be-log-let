@@ -25,56 +25,41 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PW }}
-
-      - name: Check env
-        run: |
-          echo "DOCKERHUB_USERNAME: ${{ env.DOCKERHUB_USERNAME }}"
-          echo "GITHUB_SHA: ${{ env.GITHUB_SHA }}"
-          echo "PORT: ${{ env.PORT }}"
-          echo "DB_HOST: ${{ env.DB_HOST }}"
-          echo "DB_USER: ${{ env.DB_USER }}"
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_PW }}
 
       - name: Build and tag image
         run: |
-          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/be-log-let:${{ github.sha }}
+          IMAGE_NAME=${{ env.DOCKERHUB_USERNAME }}/be-log-let:${{ env.GITHUB_SHA }}
           docker build -t $IMAGE_NAME .
+
+      - name: check docker image 
+        run: |
+          docker images
 
       - name: Tag and Push App Image
         run: |
-          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/be-log-let:${{ github.sha }}
+          IMAGE_NAME=${{ env.DOCKERHUB_USERNAME }}/be-log-let:${{ env.GITHUB_SHA }}
           docker tag be-log-let_app $IMAGE_NAME
           docker push $IMAGE_NAME
 
-      - name: Set output tag
-        id: meta
-        run: |
-          echo "tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+      
         
   deploy:
     name: Deploy to Droplet
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: check env
-        run: |
-          echo "DOCKERHUB_USERNAME: ${{ env.DOCKERHUB_USERNAME }}"
-          echo "GITHUB_SHA: ${{ env.GITHUB_SHA }}"
-          echo "PORT: ${{ env.PORT }}"
-          echo "DB_HOST: ${{ env.DB_HOST }}"
-          echo "DB_USER: ${{ env.DB_USER }}"
-          echo "DB_PW: ${{ env.DB_PW }}"
       - name: SSH & Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{secrets.USERNAME}}
-          key: ${{secrets.KEY}}
+          host: ${{ env.HOST }}
+          username: ${{ env.USERNAME }}
+          key: ${{ env.KEY }}
           script: |
-            IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/be-log-let:${{ needs.build-and-push.outputs.tag }}
-            echo "${{ secrets.DOCKERHUB_PW }}" \
-              | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+            IMAGE=${{ env.DOCKERHUB_USERNAME }}/be-log-let:${{ env.GITHUB_SHA }}
+            echo "${{ env.DOCKERHUB_PW }}" \
+              | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
             # pull latest
             docker-compose pull
             # stop & remove old
