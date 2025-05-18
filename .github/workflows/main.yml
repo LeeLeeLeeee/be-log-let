@@ -66,9 +66,9 @@ jobs:
             # pull latest
             docker compose pull
             # stop & remove old
-            docker stop myapp  || true
-            docker rm   myapp  || true
-            docker stop mydb  || true
-            docker rm   mydb  || true
+            docker stop myapp 2>/dev/null || true
+            docker rm   myapp 2>/dev/null || true
+            docker stop mydb 2>/dev/null || true
+            docker rm   mydb   2>/dev/null || true
             # run new
             docker compose up -d
