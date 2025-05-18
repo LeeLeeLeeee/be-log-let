@@ -63,15 +63,6 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: create .env file
-        run: |
-          echo "PORT=${{ env.PORT }}" > .env
-          echo "DB_HOST=${{ env.DB_HOST }}" >> .env
-          echo "DB_PORT=${{ env.DB_PORT }}" >> .env
-          echo "DB_USER=${{ env.DB_USER }}" >> .env
-          echo "DB_PW=${{ env.DB_PW }}" >> .env
-          echo "GITHUB_SHA=${{ env.GITHUB_SHA }}" >> .env
-          echo "DOCKERHUB_USERNAME=${{ env.DOCKERHUB_USERNAME }}" >> .env
           
       - name: SSH & Deploy
         uses: appleboy/ssh-action@master
@@ -80,9 +71,17 @@ jobs:
           username: ${{ env.USERNAME }}
           key: ${{ env.KEY }}
           script: |
-            IMAGE=${{ env.DOCKERHUB_USERNAME }}/be-log-let:${{ env.GITHUB_SHA }}
-            echo "${{ env.DOCKERHUB_PW }}" \
-              | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
+            echo "${{ env.DOCKERHUB_PW }}" | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
+            # Create .env on remote for Docker Compose
+            cat << 'EOF' > .env
+            PORT=${{ env.PORT }}
+            DB_HOST=${{ env.DB_HOST }}
+            DB_PORT=${{ env.DB_PORT }}
+            DB_USER=${{ env.DB_USER }}
+            DB_PW=${{ env.DB_PW }}
+            GITHUB_SHA=${{ env.GITHUB_SHA }}
+            DOCKERHUB_USERNAME=${{ env.DOCKERHUB_USERNAME }}
+            EOF
             # pull latest
             docker compose pull
             # stop & remove old
