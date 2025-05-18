@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: myapp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    image: ${DOCKERHUB_USERNAME}/be-log-let:${GITHUB_SHA}
+    ports:
+      - "80:${PORT}"
+    depends_on:
+      - db
+    deploy:
+      resources:
+        limits:
+           memory: 256M
+    
+
+  
+  db:
+    container_name: mydb
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    environment:
+      POSTGRES_DB:   ${DB_HOST}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PW}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+
+volumes:
+  pgdata: 

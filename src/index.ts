@@ -43,4 +43,5 @@ app.use(router.routes()).use(router.allowedMethods());
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 app.listen(PORT, () => {
     console.log(`Koa (TypeScript) 서버가 포트 ${PORT}에서 실행 중`);
+    console.log(`DB_HOST: ${process.env.DB_HOST}`);
 });
